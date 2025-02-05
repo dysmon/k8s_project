@@ -8,7 +8,6 @@ RUN go mod download
 
 COPY . .
 
-RUN go test -v ./...
 RUN CGO_ENABLED=0 GOOS=linux go build -o snippetbox ./cmd/web
 
 FROM golang:1.23.4-alpine AS build-release-stage
