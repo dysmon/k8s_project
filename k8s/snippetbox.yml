@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: snippetbox-deploy
+  labels:
+    name: snippetbox-deploy
+    app: snippetbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: snippetbox-pod
+      app: snippetbox
+  template:
+    metadata:
+      name: snippetbox-pod
+      labels:
+        name: snippetbox-pod
+        app: snippetbox
+    spec:
+      containers:
+      - name: snippetbox
+        image: diasraibek/snippetbox:1.0
+        env:
+        - name: DB_USER
+          value: "root"
+        - name: DB_PASSWORD
+          value: "example"
+        - name: DB_HOST
+          value: "db:3306"
+        args: ["-addr", ":4000", "-dsn", "$(DB_USER):$(DB_PASSWORD)@tcp($(DB_HOST))/snippetbox?parseTime=true"]
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
