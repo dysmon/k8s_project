@@ -1,3 +1,4 @@
 .idea/
 local_test/
 tls/
+k8s/mysql-secrets*

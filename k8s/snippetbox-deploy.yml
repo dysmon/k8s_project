@@ -23,11 +23,20 @@ spec:
         image: diasraibek/snippetbox:1.0
         env:
         - name: DB_USER
-          value: "root"
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: db_user
         - name: DB_PASSWORD
-          value: "example"
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secrets
+              key: db_passwd
         - name: DB_HOST
-          value: "db:3306"
+          valueFrom:
+            configMapKeyRef:
+              name: snippetbox-configmap
+              key: db_host
         args: ["-addr", ":4000", "-dsn", "$(DB_USER):$(DB_PASSWORD)@tcp($(DB_HOST))/snippetbox?parseTime=true"]
   strategy:
     type: RollingUpdate
