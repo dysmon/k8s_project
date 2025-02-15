@@ -18,6 +18,10 @@ spec:
       containers:
       - name: mysql
         image: mysql:8.0
+        resources:
+          requests:
+            memory: "250Mi"
+            cpu: "250m"
         env:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
@@ -31,7 +35,17 @@ spec:
               key: db_name
         volumeMounts:
         - name: data
-          mountPath: /var/lib/mysql 
+          mountPath: /var/lib/mysql
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping", "-h", "localhost"]
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping", "-h", "localhost"]
+          initialDelaySeconds: 15
+          periodSeconds: 5
   volumeClaimTemplates:
   - metadata:
       name: data
