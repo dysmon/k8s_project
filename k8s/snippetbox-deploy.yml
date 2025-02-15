@@ -21,6 +21,10 @@ spec:
       containers:
       - name: snippetbox
         image: diasraibek/snippetbox:1.0
+        resources:  
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
         env:
         - name: DB_USER
           valueFrom:
@@ -38,6 +42,16 @@ spec:
               name: snippetbox-configmap
               key: db_host
         args: ["-addr", ":4000", "-dsn", "$(DB_USER):$(DB_PASSWORD)@tcp($(DB_HOST))/snippetbox?parseTime=true"]
+        livenessProbe:
+          tcpSocket:
+            port: 4000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:  
+          tcpSocket:
+            port: 4000
+          initialDelaySeconds: 15
+          periodSeconds: 10
   strategy:
     type: RollingUpdate
     rollingUpdate:
