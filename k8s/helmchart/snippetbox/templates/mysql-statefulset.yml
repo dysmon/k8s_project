@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-db
+spec:
+  replicas: {{ .Values.dbReplicas }}
+  selector:
+    matchLabels:
+      name: mysql-pod
+      app: snippetbox
+  template:
+    metadata:
+      name: mysql-pod
+      labels:
+        name: mysql-pod
+        app: snippetbox
+    spec:
+      containers:
+      - name: mysql
+        image: "{{ .Values.image.db.repository }}:{{ .Values.image.db.tag }}"
+        resources:
+          requests:
+            memory: {{ .Values.resources.db.requests.memory }}
+            cpu: {{ .Values.resources.db.requests.cpu }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secret.name }}
+              key: db_passwd 
+        - name: MYSQL_DATABASE
+          valueFrom: 
+            configMapKeyRef:
+              name: {{ .Values.database.configMap.name }}
+              key: db_name
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/mysql
+        livenessProbe:
+          exec:
+            command: ["mysqladmin", "ping", "-h", "localhost"]
+          initialDelaySeconds: {{ .Values.livenessProbe.db.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.db.periodSeconds }}
+        readinessProbe:
+          exec:
+            command: ["mysqladmin", "ping", "-h", "localhost"]
+          initialDelaySeconds: {{ .Values.readinessProbe.db.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.db.periodSeconds }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["{{ .Values.storage.accessMode }}"]
+      resources:
+        requests:
+          storage: "{{ .Values.storage.size }}"
