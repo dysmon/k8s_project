@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-app
+  labels:
+    name: snippetbox-deploy
+    app: snippetbox
+spec:
+  replicas: {{ .Values.appReplicas }}
+  selector:
+    matchLabels:
+      name: snippetbox-pod
+      app: snippetbox
+  template:
+    metadata:
+      name: snippetbox-pod
+      labels:
+        name: snippetbox-pod
+        app: snippetbox
+    spec:
+      containers:
+      - name: snippetbox
+        image: "{{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}"
+        resources:  
+          requests:
+            memory: {{ .Values.resources.app.requests.memory }}
+            cpu: {{ .Values.resources.app.requests.cpu }}
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secret.name }}
+              key: db_user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.database.secret.name }}
+              key: db_passwd
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.database.configMap.name }}
+              key: db_host
+        args: ["-addr", ":4000", "-dsn", "$(DB_USER):$(DB_PASSWORD)@tcp($(DB_HOST))/snippetbox?parseTime=true"]
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.livenessProbe.app.port }}
+          initialDelaySeconds: {{ .Values.livenessProbe.app.initialDelaySeconds }}
+          periodSeconds: {{ .Values.livenessProbe.app.periodSeconds }}
+        readinessProbe:  
+          tcpSocket:
+            port: {{ .Values.readinessProbe.app.port }}
+          initialDelaySeconds: {{ .Values.readinessProbe.app.initialDelaySeconds }}
+          periodSeconds: {{ .Values.readinessProbe.app.periodSeconds }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
