@@ -1,4 +1,6 @@
 .idea/
 local_test/
 tls/
-k8s/mysql-secrets*
+k8s/helmchart/snippetbox/values.yaml
+k8s/helmchart/snippetbox/charts/
+k8s/helmchart/snippetbox/.helmignore
