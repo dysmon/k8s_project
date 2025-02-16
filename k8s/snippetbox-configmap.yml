@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata: 
-  name: snippetbox-configmap
-data:
-  db_host: "db:3306"
-  db_name: "snippetbox"
