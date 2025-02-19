@@ -14,7 +14,6 @@ FROM golang:1.23.4-alpine AS build-release-stage
 
 WORKDIR /app
 
-COPY --from=build-stage /app/tls tls
 COPY --from=build-stage /app/snippetbox snippetbox
 
 EXPOSE 4000
