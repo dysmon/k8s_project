@@ -43,13 +43,17 @@ spec:
               key: db_host
         args: ["-addr", ":4000", "-dsn", "$(DB_USER):$(DB_PASSWORD)@tcp($(DB_HOST))/snippetbox?parseTime=true"]
         livenessProbe:
-          tcpSocket:
+          httpGet:
+            path: {{ .Values.livenessProbe.app.path }}
             port: {{ .Values.livenessProbe.app.port }}
+            scheme: {{ .Values.livenessProbe.app.scheme }}
           initialDelaySeconds: {{ .Values.livenessProbe.app.initialDelaySeconds }}
           periodSeconds: {{ .Values.livenessProbe.app.periodSeconds }}
         readinessProbe:  
-          tcpSocket:
+          httpGet:
+            path: {{ .Values.readinessProbe.app.path }}
             port: {{ .Values.readinessProbe.app.port }}
+            scheme: {{ .Values.readinessProbe.app.scheme }}
           initialDelaySeconds: {{ .Values.readinessProbe.app.initialDelaySeconds }}
           periodSeconds: {{ .Values.readinessProbe.app.periodSeconds }}
   strategy:
