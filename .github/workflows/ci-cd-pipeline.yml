@@ -40,4 +40,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/snippetbox:1.1
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/snippetbox:1.2
