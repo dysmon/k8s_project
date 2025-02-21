@@ -10,4 +10,6 @@ spec:
   ports:
     - port: {{ .Values.service.app.port }}
       targetPort: {{ .Values.service.app.targetPort }}
+      {{- if eq .Values.service.app.type "NodePort" }}
       nodePort: {{ .Values.service.app.nodePort }}
+      {{- end}} 
