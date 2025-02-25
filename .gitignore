@@ -4,3 +4,4 @@ tls/
 k8s/helmchart/snippetbox/values.yaml
 k8s/helmchart/snippetbox/charts/
 k8s/helmchart/snippetbox/.helmignore
+k8s/helmchart/snippetbox/Chart.lock
